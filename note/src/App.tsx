@@ -2,6 +2,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useLocalStorage } from "./useLocalStorage";
 import { v4 as uuidV4 } from "uuid";
 import NewNote from "./NewNote";
+import NoteList from "./NoteList";
+import { useMemo } from "react";
 
 export interface RawNote extends RawNoteData {
   id: string;
@@ -47,9 +49,22 @@ const App: React.FC = () => {
     setTags((prev) => [...prev, tag]);
   };
 
+  //작성한 노트 리스트
+  const notesWithTags = useMemo(() => {
+    return notes.map((note) => {
+      return {
+        ...note,
+        tags: tags.filter((tag) => note.tagIds.includes(tag.id)),
+      };
+    });
+  }, [notes, tags]);
+
   return (
     <Routes>
-      <Route path="/" element={<h1>Home</h1>}></Route>
+      <Route
+        path="/"
+        element={<NoteList notes={notesWithTags} availableTags={tags} />}
+      ></Route>
       <Route
         path="/new"
         element={
@@ -60,6 +75,9 @@ const App: React.FC = () => {
           />
         }
       ></Route>
+      <Route path="/:id">
+        <Route index element={<h1>Show</h1>}></Route>
+      </Route>
       <Route path="*" element={<Navigate to="/" />}></Route>
     </Routes>
   );
