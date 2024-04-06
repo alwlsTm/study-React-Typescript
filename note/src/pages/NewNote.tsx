@@ -1,5 +1,5 @@
-import { NoteData, Tag } from "./App";
-import NoteForm from "./NoteForm";
+import { NoteData, Tag } from "../App";
+import NoteForm from "../component/NoteForm";
 
 interface OwnProps {
   onSubmit(data: NoteData): void;
@@ -7,6 +7,7 @@ interface OwnProps {
   availableTags: Tag[];
 }
 
+//새 노트
 const NewNote: React.FC<OwnProps> = ({ onSubmit, onAddTag, availableTags }) => {
   return (
     <>

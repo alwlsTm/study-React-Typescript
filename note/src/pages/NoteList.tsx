@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Tag } from "./App";
+import { Tag } from "../App";
 import Select from "react-select";
 
 interface SimplifiedNote {

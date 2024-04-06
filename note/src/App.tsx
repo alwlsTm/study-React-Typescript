@@ -1,9 +1,12 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useLocalStorage } from "./useLocalStorage";
+import { useLocalStorage } from "./hook/useLocalStorage";
 import { v4 as uuidV4 } from "uuid";
-import NewNote from "./NewNote";
-import NoteList from "./NoteList";
+import NewNote from "./pages/NewNote";
+import NoteList from "./pages/NoteList";
 import { useMemo } from "react";
+import NoteLayout from "./NoteLayout";
+import Note from "./pages/Note";
+import EditNote from "./pages/EditNote";
 
 export interface RawNote extends RawNoteData {
   id: string;
@@ -44,6 +47,27 @@ const App: React.FC = () => {
     });
   };
 
+  //노트 수정
+  const onUpdateNote = (id: string, { tags, ...data }: NoteData) => {
+    setNotes((prevNotes) => {
+      return prevNotes.map((note) => {
+        if (note.id === id) {
+          //기존 ...note 데이터를 새 ...data로 덮어쓰기
+          return { ...note, ...data, tagIds: tags.map((tag) => tag.id) };
+        } else {
+          return note;
+        }
+      });
+    });
+  };
+
+  //노트 삭제
+  const onDeleteNote = (id: string) => {
+    setNotes((prevNotes) => {
+      return prevNotes.filter((note) => note.id !== id);
+    });
+  };
+
   //태그 추가
   const addTag = (tag: Tag) => {
     setTags((prev) => [...prev, tag]);
@@ -75,8 +99,18 @@ const App: React.FC = () => {
           />
         }
       ></Route>
-      <Route path="/:id">
-        <Route index element={<h1>Show</h1>}></Route>
+      <Route path="/:id" element={<NoteLayout notes={notesWithTags} />}>
+        <Route index element={<Note onDeleteNote={onDeleteNote} />}></Route>
+        <Route
+          path="edit"
+          element={
+            <EditNote
+              onSubmit={onUpdateNote}
+              onAddTag={addTag}
+              availableTags={tags}
+            />
+          }
+        ></Route>
       </Route>
       <Route path="*" element={<Navigate to="/" />}></Route>
     </Routes>

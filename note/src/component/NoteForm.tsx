@@ -1,23 +1,27 @@
 import { FormEvent, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { NoteData, Tag } from "./App";
+import { NoteData, Tag } from "../App";
 import { v4 as uuidV4 } from "uuid";
 import Select from "react-select/creatable";
 
-interface OwnProps {
+interface OwnProps extends Partial<NoteData> {
   onSubmit(data: NoteData): void;
   onAddTag(tag: Tag): void;
   availableTags: Tag[];
 }
 
+//노트 form
 const NoteForm: React.FC<OwnProps> = ({
   onSubmit,
   onAddTag,
   availableTags,
+  title = "",
+  body = "",
+  tags = [],
 }) => {
   const titleRef = useRef<HTMLInputElement>(null);
   const bodyRef = useRef<HTMLTextAreaElement>(null);
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
   const navigate = useNavigate();
 
   //노트 폼 submit
@@ -34,7 +38,13 @@ const NoteForm: React.FC<OwnProps> = ({
   return (
     <form onSubmit={handleSubmit}>
       <label htmlFor="title">Title</label>
-      <input required id="title" type="text" ref={titleRef}></input>
+      <input
+        required
+        defaultValue={title}
+        id="title"
+        type="text"
+        ref={titleRef}
+      ></input>
       <label>Tags</label>
       <Select
         required
@@ -59,7 +69,13 @@ const NoteForm: React.FC<OwnProps> = ({
         }
       />
       <label htmlFor="body">Body</label>
-      <textarea required id="body" rows={5} ref={bodyRef}></textarea>
+      <textarea
+        required
+        defaultValue={body}
+        id="body"
+        rows={5}
+        ref={bodyRef}
+      ></textarea>
       <button type="submit">저장</button>
       <Link to="..">
         <button type="button">취소</button>
