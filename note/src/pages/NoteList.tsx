@@ -9,15 +9,29 @@ interface SimplifiedNote {
   tags: Tag[];
 }
 
-interface OwnProps {
+interface NoteListProps {
   notes: SimplifiedNote[];
   availableTags: Tag[];
+  onUpdateTag(id: string, label: string): void;
+  onDeleteTag(id: string): void;
+}
+
+interface EditTagsProps {
+  availableTags: Tag[];
+  onUpdateTag(id: string, label: string): void;
+  onDeleteTag(id: string): void;
 }
 
 //노트 리스트
-const NoteList: React.FC<OwnProps> = ({ notes, availableTags }) => {
+const NoteList: React.FC<NoteListProps> = ({
+  notes,
+  availableTags,
+  onUpdateTag,
+  onDeleteTag,
+}) => {
   const [title, setTitle] = useState("");
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   //노트 검색
   const filteredNotes = useMemo(() => {
@@ -37,8 +51,9 @@ const NoteList: React.FC<OwnProps> = ({ notes, availableTags }) => {
     <>
       <h1>Notes</h1>
       <Link to="/new">
-        <button>create</button>
+        <button>Create</button>
       </Link>
+      <button onClick={() => setIsOpen((prev) => !prev)}>EditTags</button>
       <form>
         <label htmlFor="title">Title</label>
         <input
@@ -71,6 +86,13 @@ const NoteList: React.FC<OwnProps> = ({ notes, availableTags }) => {
           </li>
         ))}
       </ul>
+      {isOpen && (
+        <EditTags
+          availableTags={availableTags}
+          onUpdateTag={onUpdateTag}
+          onDeleteTag={onDeleteTag}
+        />
+      )}
     </>
   );
 };
@@ -85,5 +107,29 @@ export const NoteCard: React.FC<SimplifiedNote> = ({ id, title, tags }) => {
       {tags.length > 0 &&
         tags.map((tag) => <span key={tag.id}>{tag.label}</span>)}
     </Link>
+  );
+};
+
+//태그 편집
+export const EditTags: React.FC<EditTagsProps> = ({
+  availableTags,
+  onUpdateTag,
+  onDeleteTag,
+}) => {
+  return (
+    <form>
+      {availableTags.map((tag) => (
+        <div key={tag.id}>
+          <input
+            type="text"
+            value={tag.label}
+            onChange={(e) => onUpdateTag(tag.id, e.target.value)}
+          ></input>
+          <button type="button" onClick={() => onDeleteTag(tag.id)}>
+            &times;
+          </button>
+        </div>
+      ))}
+    </form>
   );
 };

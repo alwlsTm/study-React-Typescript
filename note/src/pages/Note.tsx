@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useNote } from "../NoteLayout";
+import { useNote } from "../component/NoteLayout";
 import Markdown from "react-markdown";
 
 interface OwnProps {

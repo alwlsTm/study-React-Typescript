@@ -1,6 +1,6 @@
 import { NoteData, Tag } from "../App";
 import NoteForm from "../component/NoteForm";
-import { useNote } from "../NoteLayout";
+import { useNote } from "../component/NoteLayout";
 
 interface OwnProps {
   onSubmit(id: string, data: NoteData): void;

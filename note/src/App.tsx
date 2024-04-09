@@ -4,7 +4,7 @@ import { v4 as uuidV4 } from "uuid";
 import NewNote from "./pages/NewNote";
 import NoteList from "./pages/NoteList";
 import { useMemo } from "react";
-import NoteLayout from "./NoteLayout";
+import NoteLayout from "./component/NoteLayout";
 import Note from "./pages/Note";
 import EditNote from "./pages/EditNote";
 
@@ -73,6 +73,26 @@ const App: React.FC = () => {
     setTags((prev) => [...prev, tag]);
   };
 
+  //태그 수정
+  const updateTag = (id: string, label: string) => {
+    setTags((prevTags) => {
+      return prevTags.map((tag) => {
+        if (tag.id === id) {
+          return { ...tag, label };
+        } else {
+          return tag;
+        }
+      });
+    });
+  };
+
+  //태그 삭제
+  const deleteTag = (id: string) => {
+    setTags((prevTags) => {
+      return prevTags.filter((tag) => tag.id !== id);
+    });
+  };
+
   //작성한 노트 리스트
   const notesWithTags = useMemo(() => {
     return notes.map((note) => {
@@ -87,7 +107,14 @@ const App: React.FC = () => {
     <Routes>
       <Route
         path="/"
-        element={<NoteList notes={notesWithTags} availableTags={tags} />}
+        element={
+          <NoteList
+            notes={notesWithTags}
+            availableTags={tags}
+            onUpdateTag={updateTag}
+            onDeleteTag={deleteTag}
+          />
+        }
       ></Route>
       <Route
         path="/new"
